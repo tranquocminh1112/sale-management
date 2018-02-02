@@ -5,34 +5,86 @@ using System.Linq;
 using System.Threading.Tasks;
 using App.Common.Models;
 using SaleManagement.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace SaleManagement.Services
 {
     public class CategoryService : ICategoryService
     {
-        public Task<Category> CreateAsync(Category category)
+        private SaleManagementDbContext _context;
+
+        public CategoryService(SaleManagementDbContext context)
         {
-            throw new NotImplementedException();
+            _context = context;
         }
 
-        public Task DeleteAsync(int id)
+        public async Task<Category> GetAsync(int id)
         {
-            throw new NotImplementedException();
+            return await _context.Categories.FirstOrDefaultAsync(c => c.Id == id && c.Status == ObjectStatus.Active);
         }
 
-        public Task<Category> GetAsync(int id)
+        public async Task<Category> CreateAsync(Category category)
         {
-            throw new NotImplementedException();
+            category.Status = ObjectStatus.Active;
+
+            _context.Categories.Add(category);
+            await _context.SaveChangesAsync();
+
+            return category;
         }
 
-        public Task<BaseSearchResponse<Category>> SearchAsync(BasicSearchCriteria criteria)
+        public async Task UpdateAsync(Category category)
         {
-            throw new NotImplementedException();
+            var existing = await GetAsync(category.Id);
+
+            existing.Name = category.Name;
+            existing.Description = category.Description;
+
+            await _context.SaveChangesAsync();
         }
 
-        public Task UpdateAsync(Category category)
+        public async Task DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var existing = await GetAsync(id);
+            if (existing != null)
+            {
+                existing.Status = ObjectStatus.Deleted;
+                await _context.SaveChangesAsync();
+            }
+        }
+
+        public async Task<BaseSearchResponse<Category>> SearchAsync(BasicSearchCriteria criteria)
+        {
+            var response = new BaseSearchResponse<Category>();
+
+            if (criteria == null)
+            {
+                criteria = new BasicSearchCriteria();
+            }
+
+            var query = _context.Categories.Where(v => v.Status == ObjectStatus.Active);
+
+
+            // filter by name of category
+            if (!string.IsNullOrEmpty(criteria.Keyword))
+            {
+                query = query.Where(v => v.Name.Contains(criteria.Keyword));
+            }
+
+            response.Total = await query.CountAsync();
+
+            // paging
+            if (criteria.Page.HasValue && criteria.Length.HasValue && criteria.Page.Value > 0 && criteria.Length.Value > 0)
+            {
+                query = query.Skip(criteria.Length.Value * (criteria.Page.Value - 1)).Take(criteria.Length.Value);
+            }
+
+
+            var category = await query.ToListAsync();
+
+            response.Items = category;
+
+            return response;
         }
     }
 }

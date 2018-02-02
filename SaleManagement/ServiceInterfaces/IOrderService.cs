@@ -9,10 +9,10 @@ namespace SaleManagement.ServiceInterfaces
 {
     public interface IOrderService
     {
-        Task<Order> GetAsync(int id);
+        Task<Order> GetAsync(string id);
         Task<Order> CreateAsync(Order order);
         Task UpdateAsync(Order order);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(string id);
         Task<BaseSearchResponse<Order>> SearchAsync(BasicSearchCriteria criteria);
     }
 }

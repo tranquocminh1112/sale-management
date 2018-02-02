@@ -22,9 +22,16 @@ namespace SaleManagement.Services
             _context = context;
         }
 
-        public async Task<Customer> GetAsync(int id)
+        public async Task<Customer> GetAsync(int id, bool includeChildren = false)
         {
-            return await _context.Customers.FirstOrDefaultAsync(c => c.Id == id && c.Status == ObjectStatus.Active);
+            if (includeChildren)
+            {
+                return await IncludeChildren().FirstOrDefaultAsync(c => c.Id == id && c.Status == ObjectStatus.Active);
+            }
+            else
+            {
+                return await _context.Customers.FirstOrDefaultAsync(c => c.Id == id && c.Status == ObjectStatus.Active);
+            }
         }
 
         public async Task<Customer> CreateAsync(Customer customer)
@@ -39,7 +46,7 @@ namespace SaleManagement.Services
 
         public async Task UpdateAsync(Customer customer)
         {
-            var existing = await GetAsync(customer.Id);
+            var existing = await GetAsync(customer.Id,true);
 
             existing.Name = customer.Name;
             existing.Description = customer.Description;
@@ -55,6 +62,8 @@ namespace SaleManagement.Services
             existing.CreditOrder = customer.CreditOrder;
 
             existing.Area = customer.Area;
+
+            await _context.SaveChangesAsync();
         }
 
         public async Task DeleteAsync(int id)
@@ -101,6 +110,14 @@ namespace SaleManagement.Services
             return response;
         }
 
-        
+        private IQueryable<Customer> IncludeChildren()
+        {
+            return _context.Customers
+                .Include(c => c.DebtOrder)
+                .Include(c => c.CreditOrder)
+                .Include(c => c.Area)
+                .Include(c => c.Transporters)
+                .Include(c => c.Orders);
+        }
     }
 }

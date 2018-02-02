@@ -15,5 +15,7 @@ namespace SaleManagement.Models
         public OrderDetail Detail { get; set; }
 
         public Transporter Transporter { get; set; }
+
+        public ObjectStatus Status { get; set; }
     }
 }

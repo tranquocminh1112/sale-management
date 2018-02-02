@@ -27,7 +27,7 @@ namespace SaleManagement.Controllers
         [HttpGet("{id}")]
         public async Task<CustomerViewModel> GetAsync(int id)
         {
-            var customer = await _customerService.GetAsync(id);
+            var customer = await _customerService.GetAsync(id, true);
             if(customer == null)
             {
                 throw new CustomException(Errors.CUSTOMER_NOT_FOUND, Errors.CUSTOMER_NOT_FOUND_MSG);

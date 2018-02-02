@@ -25,7 +25,7 @@ namespace SaleManagement.Models
         public Order CreditOrder { get; set; }
 
         public Area Area { get; set; }
-        public List<Transporter> Transporters { get; set; }
+        public List<CustomerTransporter> Transporters { get; set; }
         public List<Order> Orders { get; set; }
 
         public ObjectStatus Status { get; set; }

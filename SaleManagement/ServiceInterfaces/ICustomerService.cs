@@ -9,7 +9,7 @@ namespace SaleManagement.ServiceInterfaces
 {
     public interface ICustomerService
     {
-        Task<Customer> GetAsync(int id);
+        Task<Customer> GetAsync(int id, bool includeChildren = false);
         Task<Customer> CreateAsync(Customer customer);
         Task UpdateAsync(Customer customer);
         Task DeleteAsync(int id);

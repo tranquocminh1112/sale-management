@@ -4,15 +4,16 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using SaleManagement.Models;
 
 namespace SaleManagement.ServiceInterfaces
 {
     public interface IGroupService
     {
-        Task<Group> GetAsync(int id);
-        Task<Group> CreateAsync(Group group);
-        Task UpdateAsync(Group group);
+        Task<Models.Group> GetAsync(int id);
+        Task<Models.Group> CreateAsync(Models.Group group);
+        Task UpdateAsync(Models.Group group);
         Task DeleteAsync(int id);
-        Task<BaseSearchResponse<Group>> SearchAsync(BasicSearchCriteria criteria);
+        Task<BaseSearchResponse<Models.Group>> SearchAsync(BasicSearchCriteria criteria);
     }
 }

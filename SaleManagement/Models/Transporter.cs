@@ -20,7 +20,7 @@ namespace SaleManagement.Models
         public string SubContactPerson { get; set; }
 
         public Area Destination { get; set; }
-        public List<Customer> Customer { get; set; }
+        public List<CustomerTransporter> Customer { get; set; }
 
         public ObjectStatus Status { get; set; }
     }
